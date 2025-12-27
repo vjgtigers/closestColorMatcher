@@ -59,63 +59,6 @@ class Colors:
         return f"Name: {self.name}; Color: {self.color}"
 
 
-def oneColorCalc(values):
-    val = values[0]
-    color = RGB_colors[val]
-    #for i in range(10):
-    #    percent = (10-i)*10
-    return Colors(f"{val}-100%", color)
-
-def twoColorCalc(values):
-    val1 = values[0]
-    val2 = values[1]
-    color1 = RGB_colors[val1]
-    color2 = RGB_colors[val2]
-    colors = []
-
-    for i in range(10):
-        color1percent = (10-i)
-
-        for j in range(10):
-            color2percent = (10-j)
-            #print(color1percent,color2percent)
-            R = math.floor((color1[0]*color1percent+color2[0]*color2percent)/(color1percent+color2percent))
-            G = math.floor((color1[1]*color1percent+color2[1]*color2percent)/(color1percent+color2percent))
-            B = math.floor((color1[2]*color1percent+color2[2]*color2percent)/(color1percent+color2percent))
-            rgbColor = (R, G, B)
-            colors.append(Colors(f"({val1}-{color1percent*10}%, {val2}-{color2percent*10}%)", rgbColor))
-
-    return colors
-
-def threeColorCalc(values):
-    val1 = values[0]
-    val2 = values[1]
-    val3 = values[2]
-    color1 = RGB_colors[val1]
-    color2 = RGB_colors[val2]
-    color3 = RGB_colors[val3]
-    colors = []
-
-    for i in range(10):
-        color1percent = (10-i)
-
-        for j in range(10):
-            color2percent = (10-j)
-
-            for k in range(10):
-                color3percent = (10-k)
-
-                R = math.floor((color1[0]*color1percent+color2[0]*color2percent+color3[0]*color3percent)/(color1percent+color2percent+color3percent))
-                G = math.floor((color1[1]*color1percent+color2[1]*color2percent+color3[1]*color3percent)/(color1percent+color2percent+color3percent))
-                B = math.floor((color1[2]*color1percent+color2[2]*color2percent+color3[2]*color3percent)/(color1percent+color2percent+color3percent))
-                rgbColors = (R, G, B)
-
-                colors.append(Colors(f"({val1}-{color1percent * 10}%, {val2}-{color2percent * 10}%, {val3}-{color3percent * 10}%)", rgbColors))
-
-    return colors
-# Press the green button in the gutter to run the script.
-
-
 def multiColorCalc(values, steps = 10):
 
     if not values: raise ValueError("values can not be empty")
@@ -177,12 +120,12 @@ print(all_sets1)
 allColors = []
 #for i in all_sets1:
 #    allColors.append(oneColorCalc(i))
-allColors.extend([oneColorCalc(i) for i in all_sets1])
+allColors.extend([multiColorCalc(i) for i in all_sets1])
 for i in all_sets2:
-    allColors.extend(twoColorCalc(i))
+    allColors.extend(multiColorCalc(i))
 
 for i in all_sets3:
-    allColors.extend(threeColorCalc(i))
+    allColors.extend(multiColorCalc(i))
 
 lowestColor = 999
 lowestColorName = None
@@ -209,7 +152,7 @@ rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestC
 
 print("NEW funciton testing")
 print("-"*100)
-baseline = threeColorCalc(all_sets3[0])
+baseline = multiColorCalc(all_sets3[0])
 test = multiColorCalc(all_sets3[0])
 print(baseline[0], test[0])
 
