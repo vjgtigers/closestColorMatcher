@@ -83,7 +83,7 @@ def twoColorCalc(values):
             G = math.floor((color1[1]*color1percent+color2[1]*color2percent)/(color1percent+color2percent))
             B = math.floor((color1[2]*color1percent+color2[2]*color2percent)/(color1percent+color2percent))
             rgbColor = (R, G, B)
-            colors.append(Colors(f"({val1}-{color1percent*10}%, {val2}-{color2percent*10}%", rgbColor))
+            colors.append(Colors(f"({val1}-{color1percent*10}%, {val2}-{color2percent*10}%)", rgbColor))
 
     return colors
 
@@ -110,7 +110,7 @@ def threeColorCalc(values):
                 B = math.floor((color1[2]*color1percent+color2[2]*color2percent+color3[2]*color3percent)/(color1percent+color2percent+color3percent))
                 rgbColors = (R, G, B)
 
-                colors.append(Colors(f"({val1}-{color1percent * 10}%, {val2}-{color2percent * 10}%, {val3}-{color3percent * 10}%", rgbColors))
+                colors.append(Colors(f"({val1}-{color1percent * 10}%, {val2}-{color2percent * 10}%, {val3}-{color3percent * 10}%)", rgbColors))
 
     return colors
 # Press the green button in the gutter to run the script.
@@ -132,7 +132,7 @@ def multiColorCalc(values, steps = 10):
     names = values
 
     colors_out = []
-    weight_range = range[steps, 0, -1]
+    weight_range = range(steps, 0, -1)
 
     for weights in itertools.product(weight_range, repeat=len(values)):
         total_weight = sum(weights)
@@ -146,11 +146,11 @@ def multiColorCalc(values, steps = 10):
         for name, w in zip(names, weights):
             percent = int(w * 100 / steps)
             parts.append(f"{name}-{percent}%")
-        label = f"( {','.join(parts)})"
+        label = f"({', '.join(parts)})"
 
         colors_out.append(Colors(label, rgb_value))
 
-
+    return colors_out
 
 
 if __name__ == '__main__':
@@ -195,7 +195,7 @@ for i in allColors:
     if distance<lowestColor:
         lowestColor = distance
         lowestColorName=i
-    if distance <= 40:
+    if distance <= 5:
         allClose.append(i)
 
 for i in allClose:
@@ -207,7 +207,20 @@ rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestC
 #twoColorCalc(all_sets2[0])
 
 
+print("NEW funciton testing")
+print("-"*100)
+baseline = threeColorCalc(all_sets3[0])
+test = multiColorCalc(all_sets3[0])
+print(baseline[0], test[0])
 
-threeColorCalc(all_sets3[0])
-
+print(len(baseline), len(test))
+for i in range(len(baseline)):
+    if baseline[i].color == test[i].color and baseline[i].name == test[i].name: continue
+    else:
+        print("FAILED")
+        exit(4)
+print(baseline[0])
+print(test[0])
+if baseline == test:
+    print('Equals')
 rgb_background_block(20, 160, 150, width=30, height=8)
