@@ -1,8 +1,15 @@
 from itertools import combinations
 import itertools
 import math
-
+import argparse
 from extraFuncts import enable_vt_mode, rgb_background_block
+
+parser = argparse.ArgumentParser(prog="Closest Color Matcher", description="Program to get closest matching color from provided options", epilog="Created by Vaughn Gugger")
+parser.add_argument("path", help="Path to file containing RGB colors for calculations")
+parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps to calculate colors with. Ex, 1=just 100%, 2= 100% and 50%, 10= 100,90,80...%")
+parser.add_argument("-o", "-output", type=str, default="colorCalcSave.txt", help="File path to save output to")
+
+
 
 def rgb(r,g,b):
     return (r,g,b)
@@ -32,11 +39,9 @@ RGB_colors = {
     "white":rgb(255, 255, 255),
 }
 
-allMaxMatchAttempt = (138, 53, 61)
 
 finalColorMatch = rgb(210, 130, 137)
 
-current = [0,0,0]
 
 class Colors:
     def __init__(self, colorName, colorTuple):
@@ -102,20 +107,18 @@ if __name__ == '__main__':
         print("Warning: couldn't enable ANSI VT mode. Try using Windows Terminal or a modern console.")
 
 
-    print(RGB_colors["wineberry"][0])
-    for key, value in RGB_colors.items():
-        print(key, value)
-        for i in range(3):
-            current[i] = current[i] + value[i]*10
 
 
-print(current)
 all_sets1 = []
 all_sets2 = []
 all_sets3 = []
 all_sets1.extend(combinations(RGB_colors.keys(), 1))
 all_sets2.extend(combinations(RGB_colors.keys(), 2))
 all_sets3.extend(combinations(RGB_colors.keys(), 3))
+
+
+
+
 print(all_sets1)
 allColors = []
 #for i in all_sets1:
