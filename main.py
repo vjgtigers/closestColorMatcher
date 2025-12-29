@@ -8,59 +8,40 @@ import re
 
 parser = argparse.ArgumentParser(prog="Closest Color Matcher", description="Program to get closest matching color from provided options", epilog="Created by Vaughn Gugger")
 parser.add_argument("path", help="Path to file containing RGB colors for calculations, please either modify or see colorOptions.json for file formatting")
-parser.add_argument("matchColor", help="RGB color value you want to match in '(34, 233, 87)' style format")
+parser.add_argument("matchColor", help="RGB color value you want to match in '[34, 233, 87]' style format")
 parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps to calculate colors with. Ex, 1=just 100%%, 2= 100%% and 50%%, 10= 100,90,80...%%")
 parser.add_argument("-o", "-output", type=str, default="colorCalcSave.txt", help="File path to save output to")
 args = parser.parse_args()
 #color values used in colorOptions.json are pulled from https://www.lipnpour.com/products/create-your-lip-product
+#finalColorMatch = rgb(210, 130, 137)
 
 def rgb(r,g,b):
     return (r,g,b)
 
-#these colors are pulled from https://www.lipnpour.com/products/create-your-lip-product
-RGB_colors = {
-    "wineberry" : rgb(127, 41, 45),
-    "red-red" : rgb(180, 65, 63),
-    "blackberry" : rgb(107, 54, 77),
-    "magenta" : rgb(204, 30, 126),
-    "ruby red": rgb(185, 10, 77),
-    "coral":rgb(209, 70, 118),
-    "crimson":rgb(212, 67, 72),
-    "flame":rgb(214, 55, 8),
-    "paprika":rgb(202, 41, 36),
-    "peach":rgb(235, 178, 129),
-    "russet":rgb(155, 74, 60),
-    "tangerine":rgb(234, 76, 10),
-    "black":rgb(0, 0, 0),
-    "blueberry":rgb(8, 98, 155),
-    "brown":rgb(94, 63, 36),
-    "sapphire":rgb(39, 40, 150),
-    "mahogany":rgb(98, 51, 40),
-    "marigold":rgb(234, 192, 8),
-    "cocoa":rgb(106, 79, 71),
-    "ochre":rgb(170, 122, 9),
-    "white":rgb(255, 255, 255),
-}
-with open("colorOptions.json", "w") as f:
-    text = json.dumps(RGB_colors, indent=4)
-    pattern = r"\[\s+((?:-?\d+(?:\s*,\s*)?)+)\s+]"
-    text = re.sub(pattern, lambda m: "[" + " ".join(m.group(1).split()) + "]", text)
-    f.write(text)
+RGB_colors = {}
+colorsFile = open(args.path, "r")
+colors = json.load(colorsFile)
+for key, value in colors.items():
+    RGB_colors[key] = tuple((value[0], value[1], value[2]))
 
-print("happenig now!")
-with open("colorOptions.json", "r") as f:
-    colors = json.load(f)
-    print(colors)
-    print(colors["white"])
-    RGB_values_new = {}
-    for key, value in colors.items():
-        RGB_values_new[key] = tuple((value[0], value[1], value[2]))
-    print("*"*100)
-    print(RGB_values_new)
-finalColorMatch = rgb(210, 130, 137)
-print("--")
-print(RGB_colors)
-print("---")
+colorList = json.loads(args.matchColor)
+if not isinstance(colorList, list):
+    print("Incorrectly formated input for matchColor, fix and try again")
+    exit()
+if len(colorList) != 3:
+    print("Incorrect number of elements, fix and try again")
+    exit()
+if not all(isinstance(x, int) for x in colorList):
+    print("All values must be int, fix and try again")
+    exit()
+if not all(0<= x <= 255 for x in colorList):
+    print("All values must be in range 0 <= x <= 255, fix and try again")
+    exit()
+finalColorMatch = rgb(colorList[0], colorList[1], colorList[2])
+
+
+print("Import complete")
+
 class Colors:
     def __init__(self, colorName, colorTuple):
         self.name = colorName
