@@ -3,13 +3,16 @@ import itertools
 import math
 import argparse
 from extraFuncts import enable_vt_mode, rgb_background_block
+import json
+import re
 
 parser = argparse.ArgumentParser(prog="Closest Color Matcher", description="Program to get closest matching color from provided options", epilog="Created by Vaughn Gugger")
-parser.add_argument("path", help="Path to file containing RGB colors for calculations")
-parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps to calculate colors with. Ex, 1=just 100%, 2= 100% and 50%, 10= 100,90,80...%")
+parser.add_argument("path", help="Path to file containing RGB colors for calculations, please either modify or see colorOptions.json for file formatting")
+parser.add_argument("matchColor", help="RGB color value you want to match in '(34, 233, 87)' style format")
+parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps to calculate colors with. Ex, 1=just 100%%, 2= 100%% and 50%%, 10= 100,90,80...%%")
 parser.add_argument("-o", "-output", type=str, default="colorCalcSave.txt", help="File path to save output to")
-
-
+args = parser.parse_args()
+#color values used in colorOptions.json are pulled from https://www.lipnpour.com/products/create-your-lip-product
 
 def rgb(r,g,b):
     return (r,g,b)
@@ -38,11 +41,26 @@ RGB_colors = {
     "ochre":rgb(170, 122, 9),
     "white":rgb(255, 255, 255),
 }
+with open("colorOptions.json", "w") as f:
+    text = json.dumps(RGB_colors, indent=4)
+    pattern = r"\[\s+((?:-?\d+(?:\s*,\s*)?)+)\s+]"
+    text = re.sub(pattern, lambda m: "[" + " ".join(m.group(1).split()) + "]", text)
+    f.write(text)
 
-
+print("happenig now!")
+with open("colorOptions.json", "r") as f:
+    colors = json.load(f)
+    print(colors)
+    print(colors["white"])
+    RGB_values_new = {}
+    for key, value in colors.items():
+        RGB_values_new[key] = tuple((value[0], value[1], value[2]))
+    print("*"*100)
+    print(RGB_values_new)
 finalColorMatch = rgb(210, 130, 137)
-
-
+print("--")
+print(RGB_colors)
+print("---")
 class Colors:
     def __init__(self, colorName, colorTuple):
         self.name = colorName
