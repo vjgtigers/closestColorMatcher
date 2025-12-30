@@ -99,29 +99,34 @@ if __name__ == '__main__':
 
 
 
+baseColorOptions = []
+baseColorOptions.extend(combinations(RGB_colors.keys(), 1))
+baseColorOptions.extend(combinations(RGB_colors.keys(), 2))
+baseColorOptions.extend(combinations(RGB_colors.keys(), 3))
 
-all_sets1 = []
-all_sets2 = []
-all_sets3 = []
-all_sets1.extend(combinations(RGB_colors.keys(), 1))
-all_sets2.extend(combinations(RGB_colors.keys(), 2))
-all_sets3.extend(combinations(RGB_colors.keys(), 3))
 
-print(all_sets1)
+
 allColors = []
-#for i in all_sets1:
-#    allColors.append(oneColorCalc(i))
-allColors.extend([multiColorCalc(i) for i in all_sets1])
-for i in all_sets2:
-    allColors.extend(multiColorCalc(i))
+allColors.extend([multiColorCalc(i) for i in baseColorOptions])
 
-for i in all_sets3:
-    allColors.extend(multiColorCalc(i))
 
-lowestColor = 999
-lowestColorName = None
+
+#reorganize
+allColorsTemp = []
+for i in allColors:
+    if isinstance(i, list):
+        for j in i:
+            allColorsTemp.append(j)
+    else:
+        allColorsTemp.append(i)
+allColors = allColorsTemp
+
+
+
 
 allClose = []
+lowestColor = 999
+lowestColorName = None
 
 print("-"*100)
 for i in allColors:
@@ -133,7 +138,7 @@ for i in allColors:
         allClose.append(i)
 
 for i in allClose:
-    print(i, i.getDistanceFrom(finalColorMatch), end=" ")
+    print(i, f"Distance: {i.getDistanceFrom(finalColorMatch)}", end=" ")
     rgb_background_block(i.color[0], i.color[1], i.color[2], 20, 1)
 print("-"*100)
 print(lowestColorName, lowestColorName.getDistanceFrom(finalColorMatch), end=" ")
@@ -143,18 +148,18 @@ rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestC
 
 print("NEW funciton testing")
 print("-"*100)
-baseline = multiColorCalc(all_sets3[0])
-test = multiColorCalc(all_sets3[0])
-print(baseline[0], test[0])
-
-print(len(baseline), len(test))
-for i in range(len(baseline)):
-    if baseline[i].color == test[i].color and baseline[i].name == test[i].name: continue
-    else:
-        print("FAILED")
-        exit(4)
-print(baseline[0])
-print(test[0])
-if baseline == test:
-    print('Equals')
-rgb_background_block(20, 160, 150, width=30, height=8)
+#baseline = multiColorCalc(all_sets3[0])
+#test = multiColorCalc(all_sets3[0])
+#print(baseline[0], test[0])
+#
+#print(len(baseline), len(test))
+#for i in range(len(baseline)):
+#    if baseline[i].color == test[i].color and baseline[i].name == test[i].name: continue
+#    else:
+#        print("FAILED")
+#        exit(4)
+#print(baseline[0])
+#print(test[0])
+#if baseline == test:
+#    print('Equals')
+#rgb_background_block(20, 160, 150, width=30, height=8)
