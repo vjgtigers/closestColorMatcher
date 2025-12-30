@@ -37,3 +37,17 @@ def rgb_background_block(r, g, b, width=20, height=6, char=" "):
     # print rows; keep simple and portable
     for _ in range(height):
         print(row)
+
+def validateColorList(colorList):
+    if not isinstance(colorList, list):
+        print("Incorrectly formated input for matchColor, fix and try again")
+        exit()
+    if len(colorList) != 3:
+        print("Incorrect number of elements, fix and try again")
+        exit()
+    if not all(isinstance(x, int) for x in colorList):
+        print("All values must be int, fix and try again")
+        exit()
+    if not all(0 <= x <= 255 for x in colorList):
+        print("All values must be in range 0 <= x <= 255, fix and try again")
+        exit()

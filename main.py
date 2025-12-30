@@ -2,7 +2,7 @@ from itertools import combinations
 import itertools
 import math
 import argparse
-from extraFuncts import enable_vt_mode, rgb_background_block
+from extraFuncts import enable_vt_mode, rgb_background_block, validateColorList
 import json
 import re
 
@@ -11,37 +11,29 @@ parser.add_argument("path", help="Path to file containing RGB colors for calcula
 parser.add_argument("matchColor", help="RGB color value you want to match in '[34, 233, 87]' style format")
 parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps to calculate colors with. Ex, 1=just 100%%, 2= 100%% and 50%%, 10= 100,90,80...%%")
 parser.add_argument("-o", "-output", type=str, default="colorCalcSave.txt", help="File path to save output to")
+parser.add_argument("--displayResults", action="store_true", help="Display program output to console as well")
 args = parser.parse_args()
 #color values used in colorOptions.json are pulled from https://www.lipnpour.com/products/create-your-lip-product
 #finalColorMatch = rgb(210, 130, 137)
 
-def rgb(r,g,b):
-    return (r,g,b)
 
+#load in json file of colors
 RGB_colors = {}
 colorsFile = open(args.path, "r")
 colors = json.load(colorsFile)
 for key, value in colors.items():
     RGB_colors[key] = tuple((value[0], value[1], value[2]))
 
+
+#get and validate color to match
 colorList = json.loads(args.matchColor)
-if not isinstance(colorList, list):
-    print("Incorrectly formated input for matchColor, fix and try again")
-    exit()
-if len(colorList) != 3:
-    print("Incorrect number of elements, fix and try again")
-    exit()
-if not all(isinstance(x, int) for x in colorList):
-    print("All values must be int, fix and try again")
-    exit()
-if not all(0<= x <= 255 for x in colorList):
-    print("All values must be in range 0 <= x <= 255, fix and try again")
-    exit()
-finalColorMatch = rgb(colorList[0], colorList[1], colorList[2])
+validateColorList(colorList)
+finalColorMatch = tuple((colorList[0], colorList[1], colorList[2]))
 
 
 print("Import complete")
 
+#class def
 class Colors:
     def __init__(self, colorName, colorTuple):
         self.name = colorName
@@ -114,9 +106,6 @@ all_sets3 = []
 all_sets1.extend(combinations(RGB_colors.keys(), 1))
 all_sets2.extend(combinations(RGB_colors.keys(), 2))
 all_sets3.extend(combinations(RGB_colors.keys(), 3))
-
-
-
 
 print(all_sets1)
 allColors = []
