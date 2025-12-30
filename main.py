@@ -4,7 +4,7 @@ import math
 import argparse
 from extraFuncts import enable_vt_mode, rgb_background_block, validateColorList
 import json
-import re
+
 
 parser = argparse.ArgumentParser(prog="Closest Color Matcher", description="Program to get closest matching color from provided options", epilog="Created by Vaughn Gugger")
 parser.add_argument("path", help="Path to file containing RGB colors for calculations, please either modify or see colorOptions.json for file formatting")
@@ -99,13 +99,13 @@ if __name__ == '__main__':
 
 
 
+#create all combinations
 baseColorOptions = []
 baseColorOptions.extend(combinations(RGB_colors.keys(), 1))
 baseColorOptions.extend(combinations(RGB_colors.keys(), 2))
 baseColorOptions.extend(combinations(RGB_colors.keys(), 3))
 
-
-
+#preform all the real calculations
 allColors = []
 allColors.extend([multiColorCalc(i) for i in baseColorOptions])
 
@@ -138,11 +138,11 @@ for i in allColors:
         allClose.append(i)
 
 for i in allClose:
-    print(i, f"Distance: {i.getDistanceFrom(finalColorMatch)}", end=" ")
-    rgb_background_block(i.color[0], i.color[1], i.color[2], 20, 1)
+    rgb_background_block(i.color[0], i.color[1], i.color[2], 20, 1, end=False)
+    print(f"Distance: {i.getDistanceFrom(finalColorMatch)}", i)
 print("-"*100)
-print(lowestColorName, lowestColorName.getDistanceFrom(finalColorMatch), end=" ")
-rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestColorName.color[2], 10, 1)
+rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestColorName.color[2], 20, 1, end=False)
+print(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}", lowestColorName)
 #twoColorCalc(all_sets2[0])
 
 

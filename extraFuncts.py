@@ -22,7 +22,7 @@ def enable_vt_mode():
         return False
 
 
-def rgb_background_block(r, g, b, width=20, height=6, char=" "):
+def rgb_background_block(r, g, b, width=20, height=6, char=" ", end=True):
     """
     Print a rectangular block filled with background RGB color.
       - r,g,b: 0..255
@@ -36,8 +36,10 @@ def rgb_background_block(r, g, b, width=20, height=6, char=" "):
     row = bg + (char * width) + reset
     # print rows; keep simple and portable
     for _ in range(height):
-        print(row)
-
+        if end:
+            print(row)
+        else:
+            print(row, end=" ")
 def validateColorList(colorList):
     if not isinstance(colorList, list):
         print("Incorrectly formated input for matchColor, fix and try again")
