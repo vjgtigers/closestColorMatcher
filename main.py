@@ -10,9 +10,10 @@ parser = argparse.ArgumentParser(prog="Closest Color Matcher", description="Prog
 parser.add_argument("path", help="Path to file containing RGB colors for calculations, please either modify or see colorOptions.json for file formatting")
 parser.add_argument("matchColor", help="RGB color value you want to match in '[34, 233, 87]' style format")
 parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps to calculate colors with. Ex, 1=just 100%%, 2= 100%% and 50%%, 10= 100,90,80...%%")
-parser.add_argument("-o", "--output", type=str, default="colorCalcSave.txt", help="File path to save output to")
+parser.add_argument("-o", "--output", type=str, help="File path to save output to")
 parser.add_argument("--displayResults", action="store_true", help="Display program output to console as well")
 parser.add_argument("--altOptionsMax", type=int, default=5, help="Other than the best value, display other options within this distance from color")
+
 args = parser.parse_args()
 #color values used in colorOptions.json are pulled from https://www.lipnpour.com/products/create-your-lip-product
 #finalColorMatch = rgb(210, 130, 137)
@@ -32,7 +33,7 @@ validateColorList(colorList)
 finalColorMatch = tuple((colorList[0], colorList[1], colorList[2]))
 
 
-print("Import complete")
+
 
 #class def
 class Colors:
@@ -136,7 +137,7 @@ for i in allColors:
 
 allClose = sorted(allClose, key=lambda x: x.getDistanceFrom(finalColorMatch), reverse=True)
 
-if args.displayResults == True:
+if args.displayResults == True and args.altOptionsMax>0:
     print("-"*100)
     for i in allClose:
         rgb_background_block(i.color[0], i.color[1], i.color[2], 20, 1, end=False)
@@ -145,8 +146,10 @@ if args.displayResults == True:
     rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestColorName.color[2], 20, 1, end=False)
     print(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}", lowestColorName)
     print("-"*100)
+elif args.displayResults:
+    print(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}", lowestColorName)
 
-print(args)
+
 if args.output is not None:
     if args.output == args.path:
         print("Output file can not be the same as color options file")
@@ -160,5 +163,4 @@ if args.output is not None:
             f.write(f"Distance: {i.getDistanceFrom(finalColorMatch)}, {i} \n")
 
     print(f"Output saved to '{args.output}'")
-
 
