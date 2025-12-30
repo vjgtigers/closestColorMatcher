@@ -1,8 +1,6 @@
 from itertools import combinations
-import itertools
-import math
 import argparse
-from extraFuncts import enable_vt_mode, rgb_background_block, validateColorList
+from extraFuncts import enable_vt_mode, rgb_background_block, validateColorList, Colors, multiColorCalc
 import json
 
 
@@ -35,65 +33,6 @@ finalColorMatch = tuple((colorList[0], colorList[1], colorList[2]))
 
 
 
-#class def
-class Colors:
-    def __init__(self, colorName, colorTuple):
-        self.name = colorName
-        self.color = colorTuple
-
-    def getDistancesFrom(self, colorMatch):
-        sub = tuple(x - y for x, y in zip(colorMatch, self.color))
-        return sub
-
-    def getDistanceFrom(self, colorMatch):
-        distances = self.getDistancesFrom(colorMatch)
-        val = 0
-        for i in distances:
-            val+= abs(i)
-        return val
-
-
-    def __str__(self):
-        return f"Name: {self.name}; Color: {self.color}"
-
-
-def multiColorCalc(values, steps = 10):
-
-    if not values: raise ValueError("values can not be empty")
-
-    #shortcut for if len is one
-    if len(values) == 1:
-        val = values[0]
-        color = RGB_colors[val]
-        return Colors(f"{val}-100%", color)
-
-    #anything greater than one
-
-    color_tuples = [RGB_colors[v] for v in values]
-    names = values
-
-    colors_out = []
-    weight_range = range(steps, 0, -1)
-
-    for weights in itertools.product(weight_range, repeat=len(values)):
-        total_weight = sum(weights)
-
-        R = math.floor(sum(c[0] * w for c, w in zip(color_tuples, weights)) / total_weight)
-        G = math.floor(sum(c[1] * w for c, w in zip(color_tuples, weights)) / total_weight)
-        B = math.floor(sum(c[2] * w for c, w in zip(color_tuples, weights)) / total_weight)
-        rgb_value = (R, G, B)
-
-        parts = []
-        for name, w in zip(names, weights):
-            percent = int(w * 100 / steps)
-            parts.append(f"{name}-{percent}%")
-        label = f"({', '.join(parts)})"
-
-        colors_out.append(Colors(label, rgb_value))
-
-    return colors_out
-
-
 if __name__ == '__main__':
     ok = enable_vt_mode()
     if not ok:
@@ -109,7 +48,7 @@ baseColorOptions.extend(combinations(RGB_colors.keys(), 3))
 
 #preform all the real calculations
 allColors = []
-allColors.extend([multiColorCalc(i, args.steps) for i in baseColorOptions])
+allColors.extend([multiColorCalc(i, RGB_colors, args.steps) for i in baseColorOptions])
 
 
 #reorganize

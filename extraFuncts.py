@@ -1,6 +1,6 @@
-
+import itertools
+import math
 import os
-import sys
 
 def enable_vt_mode():
     """Enable ANSI / Virtual Terminal Processing on Windows (no-op on POSIX)."""
@@ -53,3 +53,64 @@ def validateColorList(colorList):
     if not all(0 <= x <= 255 for x in colorList):
         print("All values must be in range 0 <= x <= 255, fix and try again")
         exit()
+
+
+
+
+#class def
+class Colors:
+    def __init__(self, colorName, colorTuple):
+        self.name = colorName
+        self.color = colorTuple
+
+    def getDistancesFrom(self, colorMatch):
+        sub = tuple(x - y for x, y in zip(colorMatch, self.color))
+        return sub
+
+    def getDistanceFrom(self, colorMatch):
+        distances = self.getDistancesFrom(colorMatch)
+        val = 0
+        for i in distances:
+            val+= abs(i)
+        return val
+
+
+    def __str__(self):
+        return f"Name: {self.name}; Color: {self.color}"
+
+
+def multiColorCalc(values, RGB_colors, steps = 10):
+
+    if not values: raise ValueError("values can not be empty")
+
+    #shortcut for if len is one
+    if len(values) == 1:
+        val = values[0]
+        color = RGB_colors[val]
+        return Colors(f"{val}-100%", color)
+
+    #anything greater than one
+
+    color_tuples = [RGB_colors[v] for v in values]
+    names = values
+
+    colors_out = []
+    weight_range = range(steps, 0, -1)
+
+    for weights in itertools.product(weight_range, repeat=len(values)):
+        total_weight = sum(weights)
+
+        R = math.floor(sum(c[0] * w for c, w in zip(color_tuples, weights)) / total_weight)
+        G = math.floor(sum(c[1] * w for c, w in zip(color_tuples, weights)) / total_weight)
+        B = math.floor(sum(c[2] * w for c, w in zip(color_tuples, weights)) / total_weight)
+        rgb_value = (R, G, B)
+
+        parts = []
+        for name, w in zip(names, weights):
+            percent = int(w * 100 / steps)
+            parts.append(f"{name}-{percent}%")
+        label = f"({', '.join(parts)})"
+
+        colors_out.append(Colors(label, rgb_value))
+
+    return colors_out
