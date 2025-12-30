@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(prog="Closest Color Matcher", description="Prog
 parser.add_argument("path", help="Path to file containing RGB colors for calculations, please either modify or see colorOptions.json for file formatting")
 parser.add_argument("matchColor", help="RGB color value you want to match in '[34, 233, 87]' style format")
 parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps to calculate colors with. Ex, 1=just 100%%, 2= 100%% and 50%%, 10= 100,90,80...%%")
-parser.add_argument("-o", "-output", type=str, default="colorCalcSave.txt", help="File path to save output to")
+parser.add_argument("-o", "--output", type=str, default="colorCalcSave.txt", help="File path to save output to")
 parser.add_argument("--displayResults", action="store_true", help="Display program output to console as well")
 args = parser.parse_args()
 #color values used in colorOptions.json are pulled from https://www.lipnpour.com/products/create-your-lip-product
@@ -128,7 +128,6 @@ allClose = []
 lowestColor = 999
 lowestColorName = None
 
-print("-"*100)
 for i in allColors:
     distance = i.getDistanceFrom(finalColorMatch)
     if distance<lowestColor:
@@ -137,29 +136,20 @@ for i in allColors:
     if distance <= 5:
         allClose.append(i)
 
-for i in allClose:
-    rgb_background_block(i.color[0], i.color[1], i.color[2], 20, 1, end=False)
-    print(f"Distance: {i.getDistanceFrom(finalColorMatch)}", i)
-print("-"*100)
-rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestColorName.color[2], 20, 1, end=False)
-print(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}", lowestColorName)
-#twoColorCalc(all_sets2[0])
+allClose = sorted(allClose, key=lambda x: x.getDistanceFrom(finalColorMatch), reverse=True)
 
+if args.displayResults == True:
+    print("-"*100)
+    for i in allClose:
+        rgb_background_block(i.color[0], i.color[1], i.color[2], 20, 1, end=False)
+        print(f"Distance: {i.getDistanceFrom(finalColorMatch)}", i)
+    print("-"*100)
+    rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestColorName.color[2], 20, 1, end=False)
+    print(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}", lowestColorName)
+    print("-"*100)
 
-print("NEW funciton testing")
-print("-"*100)
-#baseline = multiColorCalc(all_sets3[0])
-#test = multiColorCalc(all_sets3[0])
-#print(baseline[0], test[0])
-#
-#print(len(baseline), len(test))
-#for i in range(len(baseline)):
-#    if baseline[i].color == test[i].color and baseline[i].name == test[i].name: continue
-#    else:
-#        print("FAILED")
-#        exit(4)
-#print(baseline[0])
-#print(test[0])
-#if baseline == test:
-#    print('Equals')
+print(args)
+if args.output is not None:
+    print(f"Output saved to '{args.output}'")
+
 #rgb_background_block(20, 160, 150, width=30, height=8)
