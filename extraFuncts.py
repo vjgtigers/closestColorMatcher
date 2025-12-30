@@ -23,7 +23,7 @@ def enable_vt_mode():
 
 
 def rgb_background_block(r, g, b, width=20, height=6, char=" ", end=True):
-    """
+    """#rgb_background_block(20, 160, 150, width=30, height=8)
     Print a rectangular block filled with background RGB color.
       - r,g,b: 0..255
       - width,height: block size in characters

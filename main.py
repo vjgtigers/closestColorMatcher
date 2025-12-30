@@ -12,6 +12,7 @@ parser.add_argument("matchColor", help="RGB color value you want to match in '[3
 parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps to calculate colors with. Ex, 1=just 100%%, 2= 100%% and 50%%, 10= 100,90,80...%%")
 parser.add_argument("-o", "--output", type=str, default="colorCalcSave.txt", help="File path to save output to")
 parser.add_argument("--displayResults", action="store_true", help="Display program output to console as well")
+parser.add_argument("--altOptionsMax", type=int, default=5, help="Other than the best value, display other options within this distance from color")
 args = parser.parse_args()
 #color values used in colorOptions.json are pulled from https://www.lipnpour.com/products/create-your-lip-product
 #finalColorMatch = rgb(210, 130, 137)
@@ -107,8 +108,7 @@ baseColorOptions.extend(combinations(RGB_colors.keys(), 3))
 
 #preform all the real calculations
 allColors = []
-allColors.extend([multiColorCalc(i) for i in baseColorOptions])
-
+allColors.extend([multiColorCalc(i, args.steps) for i in baseColorOptions])
 
 
 #reorganize
@@ -122,8 +122,6 @@ for i in allColors:
 allColors = allColorsTemp
 
 
-
-
 allClose = []
 lowestColor = 999
 lowestColorName = None
@@ -133,7 +131,7 @@ for i in allColors:
     if distance<lowestColor:
         lowestColor = distance
         lowestColorName=i
-    if distance <= 5:
+    if distance <= args.altOptionsMax:
         allClose.append(i)
 
 allClose = sorted(allClose, key=lambda x: x.getDistanceFrom(finalColorMatch), reverse=True)
@@ -150,6 +148,17 @@ if args.displayResults == True:
 
 print(args)
 if args.output is not None:
+    if args.output == args.path:
+        print("Output file can not be the same as color options file")
+        exit()
+    with open(args.output, "w") as f:
+        f.write(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}, {lowestColorName} \n")
+        f.write("-"*50 + "\n")
+
+        allClose.reverse()
+        for i in allClose:
+            f.write(f"Distance: {i.getDistanceFrom(finalColorMatch)}, {i} \n")
+
     print(f"Output saved to '{args.output}'")
 
-#rgb_background_block(20, 160, 150, width=30, height=8)
+
