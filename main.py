@@ -11,6 +11,7 @@ parser.add_argument("-s", "--steps", type=int, default=10, help="Number of steps
 parser.add_argument("-o", "--output", type=str, help="File path to save output to")
 parser.add_argument("--displayResults", action="store_true", help="Display program output to console as well")
 parser.add_argument("--altOptionsMax", type=int, default=5, help="Other than the best value, display other options within this distance from color")
+parser.add_argument("--easyOutput", action="store_true", help="Output easier for other programs to interpret - only returns best result - format: [distance] [color name] [color]")
 
 args = parser.parse_args()
 #color values used in colorOptions.json are pulled from https://www.lipnpour.com/products/create-your-lip-product
@@ -76,7 +77,7 @@ for i in allColors:
 
 allClose = sorted(allClose, key=lambda x: x.getDistanceFrom(finalColorMatch), reverse=True)
 
-if args.displayResults == True and args.altOptionsMax>0:
+if args.displayResults == True and args.altOptionsMax>0 and not args.easyOutput:
     print("-"*100)
     for i in allClose:
         rgb_background_block(i.color[0], i.color[1], i.color[2], 20, 1, end=False)
@@ -85,9 +86,19 @@ if args.displayResults == True and args.altOptionsMax>0:
     rgb_background_block(lowestColorName.color[0], lowestColorName.color[1], lowestColorName.color[2], 20, 1, end=False)
     print(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}", lowestColorName)
     print("-"*100)
-elif args.displayResults:
-    print(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}", lowestColorName)
+elif args.displayResults and args.easyOutput:
+    jsonTemp = {}
+    jsonTemp["color"] = lowestColorName.color
+    jsonTemp["name"] = lowestColorName.name
+    jsonTemp["distance"] = lowestColorName.getDistanceFrom(finalColorMatch)
 
+    if args.altOptionsMax > 0:
+        names = [f"{obj.getJsonWithDistance(finalColorMatch)}" for obj in allClose]
+        jsonTemp["close_alternates"] = names
+
+    print(json.dumps(jsonTemp))
+elif args.displayResults:
+    print(f"Distance: {lowestColorName.getDistanceFrom(finalColorMatch)}", lowestColorName.name)
 
 if args.output is not None:
     if args.output == args.path:

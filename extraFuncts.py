@@ -1,4 +1,5 @@
 import itertools
+import json
 import math
 import os
 
@@ -74,6 +75,12 @@ class Colors:
             val+= abs(i)
         return val
 
+    def getJsonWithDistance(self, colorMatch):
+        tempDict = {}
+        tempDict["color"] = self.color
+        tempDict["name"] = self.name
+        tempDict["distance"] = self.getDistanceFrom(colorMatch)
+        return json.dumps(tempDict)
 
     def __str__(self):
         return f"Name: {self.name}; Color: {self.color}"
